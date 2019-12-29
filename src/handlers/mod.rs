@@ -64,6 +64,22 @@ pub fn handle_app(key: Key, app: &mut App) {
                 }
             };
         }
+        // TODO
+        // Jump to currently playing playlist (if a playlist is playing)
+        _ if key == app.user_config.keys.jump_to_playlist => {
+            // eprintln!("{:?}", app.current_playback_context);
+            if let Some(current_playback_context) = &app.current_playback_context {
+				if let Some(context) = &current_playback_context.context {
+					if context._type == rspotify::spotify::senum::Type::Playlist {
+						if let Some(playlist_id) = context.uri.split(":").next() {
+							app.playlist_offset = 0;
+							let playlist_id = String::from(playlist_id);
+							app.get_general_playlist_tracks(playlist_id);
+						}
+    				}
+    			}
+            }
+        }
         _ if key == app.user_config.keys.manage_devices => {
             app.handle_get_devices();
         }

@@ -629,6 +629,29 @@ impl App {
         }
     }
 
+	/// `get_playlist_tracks` uses the `user_playlist_tracks` method,
+	/// which restricts it to playlists the user owns.
+	/// This method also works for foreign playlists
+	/// TODO: what is the difference between the 2 methods, what are the advantages of user_...
+    pub fn get_general_playlist_tracks(&mut self, playlist_id: String) {
+		if let Some(spotify) = &self.spotify {
+			if let Ok(playlist_tracks) = spotify.playlist_tracks(
+    			&playlist_id,
+    			None,
+    			Some(self.large_search_limit),
+    			Some(self.playlist_offset),
+    			None
+    		) {
+				self.set_playlist_tracks_to_table(&playlist_tracks);
+
+                self.playlist_tracks = playlist_tracks.items;
+                if self.get_current_route().id != RouteId::TrackTable {
+                    self.push_navigation_stack(RouteId::TrackTable, ActiveBlock::TrackTable);
+                };
+    		}
+    	}
+    }
+
     // The navigation_stack actually only controls the large block to the right of `library` and
     // `playlists`
     pub fn push_navigation_stack(

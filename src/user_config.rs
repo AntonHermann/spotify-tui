@@ -88,6 +88,7 @@ pub struct KeyBindingsString {
     back: Option<String>,
     jump_to_album: Option<String>,
     jump_to_artist_album: Option<String>,
+    jump_to_playlist: Option<String>,
     manage_devices: Option<String>,
     decrease_volume: Option<String>,
     increase_volume: Option<String>,
@@ -108,6 +109,7 @@ pub struct KeyBindings {
     pub back: Key,
     pub jump_to_album: Key,
     pub jump_to_artist_album: Key,
+    pub jump_to_playlist: Key,
     pub manage_devices: Key,
     pub decrease_volume: Key,
     pub increase_volume: Key,
@@ -151,6 +153,7 @@ impl UserConfig {
                 back: Key::Char('q'),
                 jump_to_album: Key::Char('a'),
                 jump_to_artist_album: Key::Char('A'),
+                jump_to_playlist: Key::Char('z'),
                 manage_devices: Key::Char('d'),
                 decrease_volume: Key::Char('-'),
                 increase_volume: Key::Char('+'),
@@ -215,6 +218,7 @@ impl UserConfig {
         to_keys!(back);
         to_keys!(jump_to_album);
         to_keys!(jump_to_artist_album);
+        to_keys!(jump_to_playlist);
         to_keys!(manage_devices);
         to_keys!(decrease_volume);
         to_keys!(increase_volume);
