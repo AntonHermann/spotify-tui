@@ -6,3 +6,5 @@
 .spotify_token_cache.json 
 .cached_device_id.txt
 spotify-tui.sketch
+log.log
+/logs

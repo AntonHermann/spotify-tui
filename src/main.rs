@@ -119,10 +119,30 @@ fn panic_hook(info: &PanicInfo<'_>) {
     }
 }
 
+#[cfg(feature = "logging")]
+fn setup_logging() -> Result<(), failure::Error> {
+    use failure::ResultExt;
+    let package_path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    let log_dir = package_path.join("logs");
+    if !log_dir.exists() {
+		std::fs::create_dir(&log_dir).context("Failed to create log dir")?;
+    }
+    flexi_logger::Logger::with_env_or_str("info")
+    	.log_to_file()
+    	.create_symlink(package_path.join("log.log"))
+    	.directory(log_dir)
+    	.start()
+    	.context("Failed to set up logger")?;
+    Ok(())
+}
+
 fn main() -> Result<(), failure::Error> {
     panic::set_hook(Box::new(|info| {
         panic_hook(info);
     }));
+
+    #[cfg(feature = "logging")]
+    setup_logging()?;
 
     ClapApp::new(env!("CARGO_PKG_NAME"))
         .version(env!("CARGO_PKG_VERSION"))
@@ -156,6 +176,7 @@ fn main() -> Result<(), failure::Error> {
             let mut stdout = stdout();
             execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
             enable_raw_mode()?;
+            log::info!("Initialized terminal raw mode");
 
             let backend = CrosstermBackend::new(stdout);
             let mut terminal = Terminal::new(backend)?;
