@@ -67,11 +67,12 @@ pub fn handle_app(key: Key, app: &mut App) {
         // TODO
         // Jump to currently playing playlist (if a playlist is playing)
         _ if key == app.user_config.keys.jump_to_playlist => {
-            // eprintln!("{:?}", app.current_playback_context);
+            log::info!("jump to current playlist");
             if let Some(current_playback_context) = &app.current_playback_context {
 				if let Some(context) = &current_playback_context.context {
-					if context._type == rspotify::spotify::senum::Type::Playlist {
-						if let Some(playlist_id) = context.uri.split(":").next() {
+    				if context._type == rspotify::spotify::senum::Type::Playlist {
+						if let Some(playlist_id) = context.uri.split(":").last() {
+    						log::info!("- playlist_id: {}", playlist_id);
 							app.playlist_offset = 0;
 							let playlist_id = String::from(playlist_id);
 							app.get_general_playlist_tracks(playlist_id);
