@@ -66,8 +66,8 @@ pub fn handle_app(key: Key, app: &mut App) {
         }
         // TODO
         // Jump to currently playing playlist (if a playlist is playing)
-        _ if key == app.user_config.keys.jump_to_playlist => {
-            log::info!("jump to current playlist");
+        _ if key == app.user_config.keys.jump_to_playback => {
+            log::info!("jump to current playback");
             if let Some(current_playback_context) = &app.current_playback_context {
 				if let Some(context) = &current_playback_context.context {
     				match context._type {

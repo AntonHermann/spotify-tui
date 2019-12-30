@@ -833,6 +833,8 @@ impl App {
             match spotify.album(album_id) {
                 Ok(full_album) => {
                     let tracks = full_album.tracks;
+                    // self.selected_album expects a SimplifiedAlbum, so to avoid making
+                    // another API-call, we create it from the data of full_album
                     let simplified_album = SimplifiedAlbum {
 						_type: full_album._type,
 						album_group: Some("album".to_string()), // FIXME: is this correct?
