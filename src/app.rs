@@ -645,6 +645,7 @@ impl App {
 				self.set_playlist_tracks_to_table(&playlist_tracks);
 
                 self.playlist_tracks = playlist_tracks.items;
+                self.track_table.context = Some(TrackTableContext::PlaylistSearch);
                 if self.get_current_route().id != RouteId::TrackTable {
                     self.push_navigation_stack(RouteId::TrackTable, ActiveBlock::TrackTable);
                 };
@@ -822,6 +823,51 @@ impl App {
                     Err(e) => {
                         self.handle_error(e);
                     }
+                }
+            }
+        }
+    }
+
+    pub fn get_album_tracks_by_id(&mut self, album_id: &str) {
+        if let Some(spotify) = &self.spotify {
+            match spotify.album(album_id) {
+                Ok(full_album) => {
+                    let tracks = full_album.tracks;
+                    let simplified_album = SimplifiedAlbum {
+						_type: full_album._type,
+						album_group: Some("album".to_string()), // FIXME: is this correct?
+						album_type: Some(full_album.album_type.as_str().to_string()),
+						artists: full_album.artists,
+						available_markets: full_album.available_markets,
+						external_urls: full_album.external_urls,
+						href: Some(full_album.href),
+						id: Some(full_album.id),
+						images: full_album.images,
+						name: full_album.name,
+						release_date: Some(full_album.release_date),
+						release_date_precision: Some(full_album.release_date_precision),
+						restrictions: None, // FIXME: is this correct?
+						uri: Some(full_album.uri),
+                    };
+                    self.selected_album = Some(SelectedAlbum {
+                        album: simplified_album,
+                        tracks: tracks.clone(),
+                        selected_index: 0,
+                    });
+
+                    self.current_user_saved_tracks_contains(
+                        tracks
+                            .items
+                            .into_iter()
+                            .filter_map(|item| item.id)
+                            .collect::<Vec<String>>(),
+                    );
+
+                    self.album_table_context = AlbumTableContext::Simplified;
+                    self.push_navigation_stack(RouteId::AlbumTracks, ActiveBlock::AlbumTracks);
+                }
+                Err(e) => {
+                    self.handle_error(e);
                 }
             }
         }

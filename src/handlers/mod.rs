@@ -80,8 +80,12 @@ pub fn handle_app(key: Key, app: &mut App) {
     						}
     					},
     					rspotify::spotify::senum::Type::Album => {
-							log::info!(" - context.uri: {}", context.uri);
-							log::info!(" - pp: {:?}", app.playback_params.context_uri);        				},
+    						if let Some(album_id) = context.uri.split(":").last() {
+        						log::info!("- album_id: {}", album_id);
+        						let album_id = album_id.to_string();
+    							app.get_album_tracks_by_id(&album_id);
+                            }
+    					},
         				_ => {}
     				}
     			}
