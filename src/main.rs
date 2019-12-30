@@ -40,6 +40,8 @@ use tui::{
     Terminal,
 };
 use user_config::UserConfig;
+#[allow(unused_imports)]
+use log::{trace, debug, info, warn, error};
 
 const SCOPES: [&str; 13] = [
     "playlist-read-collaborative",
@@ -193,11 +195,12 @@ fn main() -> Result<(), failure::Error> {
             let mut stdout = stdout();
             execute!(stdout, EnterAlternateScreen, EnableMouseCapture)?;
             enable_raw_mode()?;
-            log::debug!("Initialized terminal raw mode");
+            debug!("Initialized terminal raw mode");
 
             let backend = CrosstermBackend::new(stdout);
             let mut terminal = Terminal::new(backend)?;
             terminal.hide_cursor()?;
+            debug!("Initialized terminal");
 
             let events = event::Events::new();
 
@@ -215,6 +218,7 @@ fn main() -> Result<(), failure::Error> {
                 Some(clipboard::ClipboardProvider::new().map_err(|err| {
                     format_err!("failed to intialize clipboard context: {}", err)
                 })?);
+            debug!("Initialized clipboard context");
 
             // Now that spotify is ready, check if the user has already selected a device_id to
             // play music on, if not send them to the device selection view
@@ -237,6 +241,7 @@ fn main() -> Result<(), failure::Error> {
                 };
 
                 let current_route = app.get_current_route();
+                trace!("current route: {:?}", current_route.id);
                 terminal.draw(|mut f| match current_route.active_block {
                     ActiveBlock::HelpMenu => {
                         ui::draw_help_menu(&mut f);
@@ -251,6 +256,7 @@ fn main() -> Result<(), failure::Error> {
                         ui::draw_main_layout(&mut f, &app);
                     }
                 })?;
+                trace!("after draw");
 
                 if current_route.active_block == ActiveBlock::Input {
                     match terminal.show_cursor() {
@@ -283,18 +289,21 @@ fn main() -> Result<(), failure::Error> {
                         spotify = new_spotify;
                         token_expiry = new_token_expiry;
                         app.spotify = Some(spotify);
+                        trace!("Spotify token refreshed");
                     } else {
                         println!("\nFailed to refresh authentication token");
                         break;
                     }
                 }
 
+				trace!("fetching next event");
                 match events.next()? {
                     event::Event::Input(key) => {
                         if key == Key::Ctrl('c') {
                             disable_raw_mode()?;
                             let mut stdout = io::stdout();
                             execute!(stdout, LeaveAlternateScreen, DisableMouseCapture)?;
+                            debug!("ctrl-c pressed: exit");
                             break;
                         }
 
