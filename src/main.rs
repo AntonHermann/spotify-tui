@@ -325,6 +325,10 @@ fn main() -> Result<(), failure::Error> {
                                     None => None,
                                 };
                                 if pop_result.is_none() {
+                                    disable_raw_mode()?;
+                                    let mut stdout = io::stdout();
+                                    execute!(stdout, LeaveAlternateScreen, DisableMouseCapture)?;
+                                    debug!("navigation stack empty -> exit");
                                     break; // Exit application
                                 }
                             }
