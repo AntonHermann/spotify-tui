@@ -85,7 +85,7 @@ pub struct Library {
 
 #[derive(Clone)]
 pub struct PlaybackParams {
-    context_uri: Option<String>,
+    pub context_uri: Option<String>,
     uris: Option<Vec<String>>,
     offset: Option<Offset>,
 }
