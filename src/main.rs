@@ -303,7 +303,7 @@ fn main() -> Result<(), failure::Error> {
                             disable_raw_mode()?;
                             let mut stdout = io::stdout();
                             execute!(stdout, LeaveAlternateScreen, DisableMouseCapture)?;
-                            debug!("ctrl-c pressed: exit");
+                            info!("ctrl-c pressed: exit");
                             break;
                         }
 
@@ -328,7 +328,7 @@ fn main() -> Result<(), failure::Error> {
                                     disable_raw_mode()?;
                                     let mut stdout = io::stdout();
                                     execute!(stdout, LeaveAlternateScreen, DisableMouseCapture)?;
-                                    debug!("navigation stack empty -> exit");
+                                    info!("navigation stack empty: exit");
                                     break; // Exit application
                                 }
                             }
